@@ -29,9 +29,12 @@ enough to read in one sitting.
 - **17 built-in devices** — iPhone SE through 16 Pro Max, Pixel, Galaxy
   (including Z Fold), iPads, Surface, MacBook Air/Pro, Windows laptop, and
   Desktop HD / 2K / 4K. Toggle any of them from the Devices menu.
+- **Drag to rearrange** — grab any card by its header and drop it wherever
+  you want it in the grid.
 - **Rotate & hide** per device; **uniform zoom** with a Fit mode that keeps
   relative device sizes honest; URL bar and reload-all.
-- **Remembers your setup** — device selection, zoom, and scroll mode persist.
+- **Remembers your setup** — device selection, card order, zoom, and scroll
+  mode persist.
 - **Dual-theme UI** — the viewer follows your system light/dark preference.
 
 ## Screenshots
@@ -75,6 +78,7 @@ Until it's on the Chrome Web Store, load it as an unpacked extension:
 | **Synced** / **Solo** | Scroll all viewports together, or each on its own |
 | Zoom | `Fit` scales so the widest enabled device fits your window; or 25–100% |
 | **Devices** | Enable/disable devices, grouped by phones / tablets / laptops / desktops |
+| Drag a card's header | Move that viewport anywhere in the grid |
 | ⟳ on a card | Rotate that device to landscape |
 | ✕ on a card | Hide that device |
 
@@ -125,6 +129,12 @@ the other frames, which apply it — with an echo guard so frames never loop.
 - Pages using JavaScript frame-busting (rare today) may refuse to render.
 - Only the main document scroll is synced — nested scrollable panels scroll
   independently by design.
+
+## Support
+
+If this tool saves you some squinting between devices, you can
+[**buy me a coffee** ☕](https://www.paypal.com/paypalme/lewisjohnvillamor/250) —
+much appreciated, never expected.
 
 ## Contributing
 

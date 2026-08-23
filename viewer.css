@@ -253,6 +253,20 @@ body {
   gap: 8px;
   padding: 8px 10px;
   border-bottom: 1px solid var(--line);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+body.reordering,
+body.reordering .card-head { cursor: grabbing; }
+
+/* While reordering, let elementsFromPoint see the cards, not the iframes */
+body.reordering .frame { pointer-events: none; }
+
+.card.dragging {
+  opacity: 0.85;
+  box-shadow: 0 16px 40px rgba(20, 20, 16, 0.25);
 }
 
 .card-name {
