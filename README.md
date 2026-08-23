@@ -1,58 +1,121 @@
 # Viewports — Multi-Device Preview
 
-A deliberately lightweight Chrome extension for developers: open any page in a
-grid of device viewports — phones, tablets, laptops, desktops, big screens —
-side by side in one tab, and scroll them together or individually.
+**See your site on every device at once.** A deliberately lightweight Chrome
+extension for developers: open any page in a grid of live device viewports —
+phones, tablets, laptops, desktops, big screens — side by side in one tab,
+and scroll them together or individually.
 
-No frameworks, no build step, no bundler, no dependencies. Six small files of
-vanilla JS/CSS.
+No frameworks. No build step. No dependencies. Six small files of vanilla
+JS/CSS, MIT licensed.
 
-![Extension icon](icons/icon128.png)
+![A page previewed simultaneously on iPhone 16 Pro Max and iPad Air, each in its own labeled viewport card](docs/screenshot.png)
+
+## Why
+
+Chrome DevTools device mode shows one device at a time. Commercial tools that
+show many are heavyweight Electron apps. This is the middle path: every
+device you care about, live, in a normal browser tab, from an extension small
+enough to read in one sitting.
+
+## Features
+
+- **One click** — press the toolbar icon on any page and it opens in the grid.
+- **Real viewports** — each device is a genuine `<iframe>` at its true CSS
+  viewport size, scaled down with a CSS transform. Media queries, container
+  queries and responsive layouts behave exactly as they do on the device.
+- **Synced & Solo scrolling** — scroll one viewport and the rest follow
+  (positions are relayed as *ratios*, so pages of different heights stay
+  aligned), or switch to Solo and drive each viewport independently.
+- **17 built-in devices** — iPhone SE through 16 Pro Max, Pixel, Galaxy
+  (including Z Fold), iPads, Surface, MacBook Air/Pro, Windows laptop, and
+  Desktop HD / 2K / 4K. Toggle any of them from the Devices menu.
+- **Rotate & hide** per device; **uniform zoom** with a Fit mode that keeps
+  relative device sizes honest; URL bar and reload-all.
+- **Remembers your setup** — device selection, zoom, and scroll mode persist.
+- **Dual-theme UI** — the viewer follows your system light/dark preference.
 
 ## Install
 
-1. Clone or download this repository.
-2. Open `chrome://extensions` in Chrome (or any Chromium browser).
+Until it's on the Chrome Web Store, load it as an unpacked extension:
+
+1. Clone this repository:
+   ```sh
+   git clone https://github.com/lewisjohnvillamor/Browser-Viewport.git
+   ```
+2. Open `chrome://extensions` in Chrome (or any Chromium-based browser —
+   Edge, Brave, Arc, Opera).
 3. Turn on **Developer mode** (top right).
-4. Click **Load unpacked** and select this folder.
+4. Click **Load unpacked** and select the cloned folder.
 5. Visit any page and click the **Viewports** toolbar icon.
 
-## Use
+## Usage
 
-- **Toolbar icon** — opens the current page in the multi-viewport grid.
-- **URL bar** — type any URL and press Enter to preview it in every device.
-- **Synced / Solo** — scroll every viewport together (proportionally, so
-  different page heights stay aligned), or scroll each one on its own.
-- **Zoom** — `Fit` scales everything uniformly so the widest enabled device
-  fits your window (relative device sizes stay honest); or pick a fixed zoom.
-- **Devices** — toggle devices on/off, grouped by phones, tablets, laptops
-  and desktops (iPhone, Pixel, Galaxy, iPad, Surface, MacBook, Windows
-  laptop, Desktop HD/2K/4K).
-- **Per-device controls** — rotate to landscape, or hide a device.
-- Your device selection, zoom, and scroll mode persist between sessions.
+| Control | What it does |
+|---|---|
+| Toolbar icon | Opens the current page in the multi-viewport grid |
+| URL bar | Preview any URL — type it and press Enter |
+| **Synced** / **Solo** | Scroll all viewports together, or each on its own |
+| Zoom | `Fit` scales so the widest enabled device fits your window; or 25–100% |
+| **Devices** | Enable/disable devices, grouped by phones / tablets / laptops / desktops |
+| ⟳ on a card | Rotate that device to landscape |
+| ✕ on a card | Hide that device |
+
+### Adding your own device
+
+Every device is one line in [`devices.js`](devices.js):
+
+```js
+{ id: "framework-13", name: "Framework 13", w: 1256, h: 786 },
+```
+
+Add it to the group it belongs to, reload the extension, done.
 
 ## How it works
 
-- `background.js` — service worker. Opens the viewer and registers a
-  `declarativeNetRequest` **session rule scoped to the viewer's tab and to
-  sub-frame requests only**, which strips `X-Frame-Options` and
-  `Content-Security-Policy` response headers so sites that forbid framing can
-  still render. Normal browsing is never touched; the rule is removed when
-  the tab closes.
-- `viewer.html/css/js` — the grid UI. Each device is a real `<iframe>` at its
-  true CSS viewport size, scaled down with a CSS transform, so media queries
-  and responsive layouts behave exactly as they would on the device.
-- `sync.js` — a tiny content script that activates **only** inside frames
-  embedded in this extension's viewer (verified via `ancestorOrigins`). It
-  reports scroll positions as ratios and applies incoming ones; the viewer
-  relays messages between frames when Synced mode is on.
-- `devices.js` — the device catalog. Add your own device by adding one line.
+Six files, one job each:
+
+| File | Role |
+|---|---|
+| `manifest.json` | Manifest V3 definition |
+| `background.js` | Service worker: opens the viewer, manages header-stripping rules |
+| `viewer.html/css/js` | The grid UI: cards, device picker, zoom, scroll-mode relay |
+| `sync.js` | Content script that mirrors scroll positions between frames |
+| `devices.js` | The device catalog |
+
+Two pieces deserve explanation:
+
+**Framing sites that forbid iframes.** Many sites send `X-Frame-Options` or a
+CSP that blocks embedding. The extension registers a `declarativeNetRequest`
+**session rule scoped to the viewer's tab and to sub-frame requests only**
+that strips those headers. Your normal browsing is never touched — the rule
+matches nothing outside the viewer tab and is deleted when the tab closes.
+
+**Scroll sync without bloat.** `sync.js` is injected everywhere (that's how
+content scripts work) but immediately exits unless the frame's *direct parent
+is this extension's viewer page*, verified via `location.ancestorOrigins`. On
+real pages it's a few no-op lines. Inside the viewer, each frame reports its
+scroll position as a ratio of its scrollable height; the viewer relays it to
+the other frames, which apply it — with an echo guard so frames never loop.
 
 ## Known limitations
 
-- Per-iframe user-agent / touch emulation isn't possible from an extension,
-  so sites that UA-sniff may serve their desktop variant everywhere. Media
-  queries, viewport widths and responsive CSS all behave correctly.
+- Extensions can't fake the user agent or touch events per-iframe, so sites
+  that UA-sniff may serve their desktop markup everywhere. Responsive CSS,
+  media queries, and viewport-based layout all behave correctly.
 - Iframes are a third-party context: sites with strict cookie policies may
-  treat you as logged out.
+  treat you as logged out inside the grid.
 - Pages using JavaScript frame-busting (rare today) may refuse to render.
+- Only the main document scroll is synced — nested scrollable panels scroll
+  independently by design.
+
+## Contributing
+
+Issues and pull requests are welcome. The bar for adding code is
+intentionally high: this project values staying small enough to audit in
+minutes. Good contributions include new device presets, bug fixes, and
+accessibility improvements. Dependencies, build steps, and frameworks will be
+politely declined.
+
+## License
+
+[MIT](LICENSE) © Lewis John Villamor and contributors.

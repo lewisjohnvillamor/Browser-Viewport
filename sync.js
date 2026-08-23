@@ -42,8 +42,14 @@
     if (!msg || msg.type !== "apply-scroll" || msg.from === FRAME_ID) return;
     const el = doc();
     applying = true;
-    el.scrollLeft = msg.x * Math.max(0, el.scrollWidth - el.clientWidth);
-    el.scrollTop = msg.y * Math.max(0, el.scrollHeight - el.clientHeight);
+    // behavior: "instant" overrides any scroll-behavior: smooth on the page —
+    // an animated scroll would outlive the guard below and echo back as a
+    // stream of scroll events, feeding a sync loop between frames.
+    el.scrollTo({
+      left: msg.x * Math.max(0, el.scrollWidth - el.clientWidth),
+      top: msg.y * Math.max(0, el.scrollHeight - el.clientHeight),
+      behavior: "instant",
+    });
     clearTimeout(applyTimer);
     applyTimer = setTimeout(() => (applying = false), 120);
   });
