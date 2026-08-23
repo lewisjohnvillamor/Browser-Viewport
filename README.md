@@ -130,6 +130,12 @@ the other frames, which apply it — with an echo guard so frames never loop.
 - Only the main document scroll is synced — nested scrollable panels scroll
   independently by design.
 
+## Support
+
+If this tool saves you some squinting between devices, you can
+[**buy me a coffee** ☕](https://www.paypal.com/paypalme/lewisjohnvillamor/250) —
+much appreciated, never expected.
+
 ## Contributing
 
 Issues and pull requests are welcome. The bar for adding code is
