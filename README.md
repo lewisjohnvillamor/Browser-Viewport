@@ -43,6 +43,10 @@ enough to read in one sitting.
 
 ![The grid: iPhone 16 Pro Max, iPad Air, MacBook Air 13 and Desktop HD side by side, each showing the same page at its own breakpoint](docs/screenshot.png)
 
+*Drag any card by its header to rearrange the grid however you like (shown at 50% zoom):*
+
+![Two viewport cards being dragged to new positions in the grid, the other cards reflowing around them](docs/reorder.gif)
+
 *Synced scrolling — every viewport at the same proportional position, however tall its page is:*
 
 ![All four viewports scrolled deep into the page in lockstep](docs/synced-scroll.png)
