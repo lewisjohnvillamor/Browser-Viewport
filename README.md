@@ -8,7 +8,7 @@ and scroll them together or individually.
 No frameworks. No build step. No dependencies. Six small files of vanilla
 JS/CSS, MIT licensed.
 
-![A page previewed simultaneously on iPhone 16 Pro Max and iPad Air, each in its own labeled viewport card](docs/screenshot.png)
+![Demo: a page loading in four device viewports, scrolling in sync, adding a device from the picker, and rotating the iPad](docs/demo.gif)
 
 ## Why
 
@@ -33,6 +33,24 @@ enough to read in one sitting.
   relative device sizes honest; URL bar and reload-all.
 - **Remembers your setup** — device selection, zoom, and scroll mode persist.
 - **Dual-theme UI** — the viewer follows your system light/dark preference.
+
+## Screenshots
+
+*A production site across iPhone, iPad, MacBook and Desktop HD — one tab, one glance:*
+
+![The grid: iPhone 16 Pro Max, iPad Air, MacBook Air 13 and Desktop HD side by side, each showing the same page at its own breakpoint](docs/screenshot.png)
+
+*Synced scrolling — every viewport at the same proportional position, however tall its page is:*
+
+![All four viewports scrolled deep into the page in lockstep](docs/synced-scroll.png)
+
+*The device picker, grouped by category:*
+
+![The Devices menu open, showing phones, tablets, laptops and desktops with checkboxes and dimensions](docs/device-picker.png)
+
+*The viewer follows your system theme — and so does the page, if it supports dark mode:*
+
+![The same grid rendered with the dark viewer theme, the previewed site also in its dark scheme](docs/dark-mode.png)
 
 ## Install
 
