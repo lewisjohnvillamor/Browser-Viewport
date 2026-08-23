@@ -8,6 +8,7 @@ const state = {
   url: new URLSearchParams(location.search).get("url") || "",
   enabled: new Set(),
   rotated: new Set(),
+  order: [], // every device id, in display order (drag to rearrange)
   zoom: "fit", // "fit" or a number as string
   synced: true,
   tabId: null,
@@ -19,13 +20,15 @@ const deviceById = new Map(allDevices.map((d) => [d.id, d]));
 /* ---------- Persistence ---------- */
 
 async function loadPrefs() {
-  const saved = await chrome.storage.local.get(["enabled", "rotated", "zoom", "synced"]);
+  const saved = await chrome.storage.local.get(["enabled", "rotated", "order", "zoom", "synced"]);
   state.enabled = new Set(
     Array.isArray(saved.enabled) && saved.enabled.length
       ? saved.enabled.filter((id) => deviceById.has(id))
       : allDevices.filter((d) => d.on).map((d) => d.id)
   );
   state.rotated = new Set(Array.isArray(saved.rotated) ? saved.rotated : []);
+  const savedOrder = Array.isArray(saved.order) ? saved.order.filter((id) => deviceById.has(id)) : [];
+  state.order = [...savedOrder, ...allDevices.map((d) => d.id).filter((id) => !savedOrder.includes(id))];
   if (saved.zoom) state.zoom = saved.zoom;
   if (typeof saved.synced === "boolean") state.synced = saved.synced;
 }
@@ -34,6 +37,7 @@ function savePrefs() {
   chrome.storage.local.set({
     enabled: [...state.enabled],
     rotated: [...state.rotated],
+    order: state.order,
     zoom: state.zoom,
     synced: state.synced,
   });
@@ -67,8 +71,9 @@ function renderCards() {
   if (!state.url) return;
 
   const template = $("#card-template");
-  for (const group of DEVICE_GROUPS) {
-    for (const d of group.devices) {
+  for (const id of state.order) {
+    const d = deviceById.get(id);
+    {
       if (!state.enabled.has(d.id)) continue;
       const card = template.content.firstElementChild.cloneNode(true);
       card.dataset.device = d.id;
@@ -230,6 +235,57 @@ function wireScrollRelay() {
   });
 }
 
+/* ---------- Drag to reorder ---------- */
+
+function wireDragReorder() {
+  const stage = $("#stage");
+  let drag = null; // { card, active, x, y }
+
+  stage.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    const head = e.target.closest(".card-head");
+    if (!head || e.target.closest(".icon-btn")) return;
+    drag = { card: head.closest(".card"), active: false, x: e.clientX, y: e.clientY };
+    head.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  stage.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    if (!drag.active) {
+      if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) return;
+      drag.active = true;
+      // pointer-events off on the iframes so elementsFromPoint sees the cards
+      document.body.classList.add("reordering");
+      drag.card.classList.add("dragging");
+    }
+    const target = document
+      .elementsFromPoint(e.clientX, e.clientY)
+      .map((el) => el.closest && el.closest(".card"))
+      .find((c) => c && c !== drag.card);
+    if (!target) return;
+    const r = target.getBoundingClientRect();
+    const before = e.clientX < r.left + r.width / 2;
+    target.parentNode.insertBefore(drag.card, before ? target : target.nextSibling);
+  });
+
+  const endDrag = () => {
+    if (!drag) return;
+    if (drag.active) {
+      document.body.classList.remove("reordering");
+      drag.card.classList.remove("dragging");
+      // Persist: visible order from the DOM, then any hidden devices after,
+      // keeping their previous relative order.
+      const visible = [...stage.querySelectorAll(".card")].map((c) => c.dataset.device);
+      state.order = [...visible, ...state.order.filter((id) => !visible.includes(id))];
+      savePrefs();
+    }
+    drag = null;
+  };
+  stage.addEventListener("pointerup", endDrag);
+  stage.addEventListener("pointercancel", endDrag);
+}
+
 /* ---------- Boot ---------- */
 
 (async function init() {
@@ -247,6 +303,7 @@ function wireScrollRelay() {
 
   wireToolbar();
   wireScrollRelay();
+  wireDragReorder();
   setMode(state.synced);
   renderDevicePanel();
   renderCards();
