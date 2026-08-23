@@ -1,0 +1,11 @@
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Packed extension artifacts
+*.crx
+*.pem
+*.zip
