@@ -147,9 +147,11 @@ event, so controlled inputs in React/Vue apps update correctly.
 - Pages using JavaScript frame-busting (rare today) may refuse to render.
 - Only the main document scroll is synced — nested scrollable panels scroll
   independently by design.
-- Interaction sync is best-effort: an element that exists in one breakpoint
-  but is never rendered in another (not just hidden) can't be matched there,
-  and heavily custom widgets (canvas UIs, shadow-DOM components) may not
+- Interaction sync is best-effort: for links there is a safety net — if a
+  breakpoint never renders the clicked link at all (some frameworks only
+  mount menu items while the menu is open), that viewport falls back to
+  navigating to the link's URL directly. Non-link elements without a match,
+  and heavily custom widgets (canvas UIs, shadow-DOM components), may not
   mirror. Remember every viewport is a real page — a mirrored form submit
   submits in every viewport.
 
