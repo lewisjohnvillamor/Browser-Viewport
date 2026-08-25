@@ -26,6 +26,12 @@ enough to read in one sitting.
 - **Synced & Solo scrolling** — scroll one viewport and the rest follow
   (positions are relayed as *ratios*, so pages of different heights stay
   aligned), or switch to Solo and drive each viewport independently.
+- **Synced interactions** — in Synced mode, clicks and typing mirror too:
+  click "About" in one viewport and every device navigates there; type into
+  a form field and the same text appears in all of them. Elements are
+  matched by *identity* (id → link href → text → structure), never by
+  coordinates, so it works even when the target lives in a hamburger menu
+  on mobile. Checkboxes, radios and selects mirror as well.
 - **17 built-in devices** — iPhone SE through 16 Pro Max, Pixel, Galaxy
   (including Z Fold), iPads, Surface, MacBook Air/Pro, Windows laptop, and
   Desktop HD / 2K / 4K. Toggle any of them from the Devices menu.
@@ -123,6 +129,14 @@ real pages it's a few no-op lines. Inside the viewer, each frame reports its
 scroll position as a ratio of its scrollable height; the viewer relays it to
 the other frames, which apply it — with an echo guard so frames never loop.
 
+**Interaction sync that can't loop.** Only *trusted* events (real user input,
+`event.isTrusted`) are broadcast; everything a sibling frame applies is
+synthetic, so an applied click or keystroke can never re-broadcast. Clicks
+are mirrored by element identity — id, then link `href`, then visible text,
+then structural position — because coordinates mean nothing across
+breakpoints. Mirrored input uses the native value setter plus an `input`
+event, so controlled inputs in React/Vue apps update correctly.
+
 ## Known limitations
 
 - Extensions can't fake the user agent or touch events per-iframe, so sites
@@ -133,6 +147,11 @@ the other frames, which apply it — with an echo guard so frames never loop.
 - Pages using JavaScript frame-busting (rare today) may refuse to render.
 - Only the main document scroll is synced — nested scrollable panels scroll
   independently by design.
+- Interaction sync is best-effort: an element that exists in one breakpoint
+  but is never rendered in another (not just hidden) can't be matched there,
+  and heavily custom widgets (canvas UIs, shadow-DOM components) may not
+  mirror. Remember every viewport is a real page — a mirrored form submit
+  submits in every viewport.
 
 ## Support
 
