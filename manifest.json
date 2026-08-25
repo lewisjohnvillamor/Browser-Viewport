@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Viewports — Multi-Device Preview",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Preview the current page across phones, tablets, laptops and desktops at once, with synced or individual scrolling.",
   "homepage_url": "https://github.com/lewisjohnvillamor/Browser-Viewport",
   "permissions": ["declarativeNetRequest", "storage"],
