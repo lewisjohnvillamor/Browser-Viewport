@@ -175,7 +175,16 @@
   chrome.runtime.onMessage.addListener((msg) => {
     if (!msg || msg.type !== "apply-action" || msg.from === FRAME_ID) return;
     const el = locate(msg.el);
-    if (!el) return;
+    if (!el) {
+      // A link that only exists inside an open hamburger menu may not be in
+      // this breakpoint's DOM at all. If we know where it led, go there.
+      if (msg.action === "click" && msg.el.href) {
+        try {
+          location.href = new URL(msg.el.href, location.href).href;
+        } catch (_) {}
+      }
+      return;
+    }
     if (msg.action === "click") {
       el.click(); // works even when the element is hidden in this breakpoint's menu
     } else if (msg.action === "input") {
