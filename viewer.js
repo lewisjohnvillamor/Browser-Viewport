@@ -223,15 +223,22 @@ function wireToolbar() {
 /* ---------- Scroll sync relay ---------- */
 
 function wireScrollRelay() {
+  // Relays scroll positions and interactions (clicks, typing) between frames
+  // while Synced mode is on. "frame-*" comes in, "apply-*" goes back out to
+  // every frame; each frame ignores its own broadcasts by id.
   chrome.runtime.onMessage.addListener((msg, sender) => {
-    if (!msg || msg.type !== "frame-scroll" || !state.synced) return;
+    if (!msg || !state.synced) return;
     if (!sender.tab || sender.tab.id !== state.tabId) return;
-    chrome.tabs.sendMessage(state.tabId, {
-      type: "apply-scroll",
-      from: msg.from,
-      x: msg.x,
-      y: msg.y,
-    }).catch(() => {});
+    if (msg.type === "frame-scroll") {
+      chrome.tabs.sendMessage(state.tabId, {
+        type: "apply-scroll",
+        from: msg.from,
+        x: msg.x,
+        y: msg.y,
+      }).catch(() => {});
+    } else if (msg.type === "frame-action") {
+      chrome.tabs.sendMessage(state.tabId, { ...msg, type: "apply-action" }).catch(() => {});
+    }
   });
 }
 
