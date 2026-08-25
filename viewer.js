@@ -308,6 +308,9 @@ function wireDragReorder() {
     console.warn("Could not enable framing rules:", e);
   }
 
+  const v = chrome.runtime.getManifest().version;
+  document.getElementById("foot-version").textContent = "v" + v;
+
   wireToolbar();
   wireScrollRelay();
   wireDragReorder();
