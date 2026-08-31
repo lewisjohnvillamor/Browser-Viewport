@@ -32,7 +32,7 @@ enough to read in one sitting.
   matched by *identity* (id → link href → text → structure), never by
   coordinates, so it works even when the target lives in a hamburger menu
   on mobile. Checkboxes, radios and selects mirror as well.
-- **17 built-in devices** — iPhone SE through 16 Pro Max, Pixel, Galaxy
+- **16 built-in devices** — iPhone SE through 16 Pro Max, Pixel, Galaxy
   (including Z Fold), iPads, Surface, MacBook Air/Pro, Windows laptop, and
   Desktop HD / 2K / 4K. Toggle any of them from the Devices menu.
 - **Drag to rearrange** — grab any card by its header and drop it wherever
