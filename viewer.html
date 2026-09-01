@@ -44,7 +44,11 @@
       <button id="devices-btn" class="btn" aria-haspopup="true" aria-expanded="false">
         Devices <span id="devices-count" class="count"></span>
       </button>
-      <div id="devices-panel" class="panel" hidden></div>
+      <div id="devices-panel" class="panel" hidden>
+        <input id="device-filter" type="search" placeholder="Filter devices…"
+               autocomplete="off" spellcheck="false" aria-label="Filter devices" />
+        <div id="devices-list"></div>
+      </div>
     </div>
   </header>
 
