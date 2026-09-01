@@ -32,9 +32,13 @@ enough to read in one sitting.
   matched by *identity* (id → link href → text → structure), never by
   coordinates, so it works even when the target lives in a hamburger menu
   on mobile. Checkboxes, radios and selects mirror as well.
-- **16 built-in devices** — iPhone SE through 16 Pro Max, Pixel, Galaxy
-  (including Z Fold), iPads, Surface, MacBook Air/Pro, Windows laptop, and
-  Desktop HD / 2K / 4K. Toggle any of them from the Devices menu.
+- **40 built-in devices** — from the 280px Galaxy Fold and 320px iPhone SE
+  right up to 4K and 21:9 ultrawide, in five groups: Phones (iPhone SE 1st
+  gen → 16 Pro Max, Pixel, Galaxy, foldables), Tablets (iPad Mini/10.2/Air/
+  Pro 11 & 12.9, Surface, Nexus 7), Laptops (MacBook Air 13/15, MacBook Pro
+  16, Windows, Chromebook), Desktops (HD, 2K, ultrawide, 4K) and **Legacy
+  screens** (SVGA 800×600, XGA 1024×768, SXGA 1280×1024, netbook). Type in
+  the picker's filter box to find one by name or size.
 - **Drag to rearrange** — grab any card by its header and drop it wherever
   you want it in the grid.
 - **Rotate & hide** per device; **uniform zoom** with a Fit mode that keeps

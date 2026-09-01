@@ -120,13 +120,16 @@ function relayout() {
 /* ---------- Device picker ---------- */
 
 function renderDevicePanel() {
-  const panel = $("#devices-panel");
+  const panel = $("#devices-list");
   panel.textContent = "";
   for (const group of DEVICE_GROUPS) {
+    const block = document.createElement("div");
+    block.className = "panel-block";
+    panel.appendChild(block);
     const label = document.createElement("div");
     label.className = "panel-group";
     label.textContent = group.group;
-    panel.appendChild(label);
+    block.appendChild(label);
     for (const d of group.devices) {
       const item = document.createElement("button");
       item.type = "button";
@@ -141,16 +144,32 @@ function renderDevicePanel() {
         `</span><span></span><span class="dims"></span>`;
       item.children[1].textContent = d.name;
       item.children[2].textContent = `${d.w}×${d.h}`;
+      item.dataset.search = `${group.group} ${d.name} ${d.w}x${d.h}`.toLowerCase();
       item.addEventListener("click", () => {
         state.enabled.has(d.id) ? state.enabled.delete(d.id) : state.enabled.add(d.id);
         savePrefs();
         renderDevicePanel();
         renderCards();
       });
-      panel.appendChild(item);
+      block.appendChild(item);
     }
   }
   $("#devices-count").textContent = String(state.enabled.size);
+  applyDeviceFilter();
+}
+
+// Hide non-matching devices, and any group left with nothing visible.
+function applyDeviceFilter() {
+  const q = ($("#device-filter").value || "").trim().toLowerCase();
+  for (const block of document.querySelectorAll(".panel-block")) {
+    let shown = 0;
+    for (const item of block.querySelectorAll(".panel-item")) {
+      const match = !q || item.dataset.search.includes(q);
+      item.hidden = !match;
+      if (match) shown++;
+    }
+    block.hidden = shown === 0;
+  }
 }
 
 /* ---------- Toolbar wiring ---------- */
@@ -197,6 +216,8 @@ function wireToolbar() {
     relayout();
   });
 
+  $("#device-filter").addEventListener("input", applyDeviceFilter);
+
   const devicesBtn = $("#devices-btn");
   const panel = $("#devices-panel");
   devicesBtn.addEventListener("click", (e) => {
@@ -204,6 +225,7 @@ function wireToolbar() {
     const open = panel.hidden;
     panel.hidden = !open;
     devicesBtn.setAttribute("aria-expanded", String(open));
+    if (open) $("#device-filter").focus();
   });
   document.addEventListener("click", (e) => {
     if (!panel.hidden && !panel.contains(e.target)) {
