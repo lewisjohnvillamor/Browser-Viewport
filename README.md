@@ -1,3 +1,5 @@
+![Viewports — see your site on every device at once: a Chrome extension previewing one page across an iPhone, iPad and MacBook viewport side by side](docs/banner.png)
+
 # Viewports — Multi-Device Preview
 
 **See your site on every device at once.** A deliberately lightweight Chrome
